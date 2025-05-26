@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Find Nearby Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            text-align: center;
+            padding-top: 50px;
+        }
+        #result {
+            margin-top: 25px;
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 22px;
+            font-size: 1em;
+            border-radius: 6px;
+            border: none;
+            background: #2980b9;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #1abc9c;
+        }
+    </style>
+</head>
+<body>
+    <h2>Locate the Nearest Event</h2>
+    <button onclick="findNearbyEvents()">Find Nearby Events</button>
+    <div id="result"></div>
+
+    <script>
+        function findNearbyEvents() {
+            const resultDiv = document.getElementById('result');
+            if (!navigator.geolocation) {
+                resultDiv.textContent = "Geolocation is not supported by your browser.";
+                return;
+            }
+            resultDiv.textContent = "Locating…";
+
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                function success(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const acc = position.coords.accuracy;
+                    resultDiv.innerHTML = 
+                        `Your coordinates:<br>Latitude: ${lat}<br>Longitude: ${lon}<br>Accuracy: ±${acc} meters.`;
+                    // Here you could add logic to find and display the nearest event.
+                },
+                function error(err) {
+                    if (err.code === 1) {
+                        resultDiv.textContent = "Permission denied. Please allow location access.";
+                    } else if (err.code === 2) {
+                        resultDiv.textContent = "Position unavailable. Please try again.";
+                    } else if (err.code === 3) {
+                        resultDiv.textContent = "Request timed out. Please try again.";
+                    } else {
+                        resultDiv.textContent = "An unknown error occurred.";
+                    }
+                },
+                options
+            );
+        }
+    </script>
+</body>
+</html>
